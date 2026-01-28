@@ -3,9 +3,11 @@ import "./global.css";
 import { useEffect } from "react";
 import { useFonts } from "expo-font";
 import GlobalProvider from "@/lib/global-provider";
+import ErrorBoundary from "./components/Errorboundary";
+import { StatusBar } from "expo-status-bar";
 
 export default function RootLayout() {
-  const [fontsLoaded] = useFonts({
+  const [fontsLoaded, fontError] = useFonts({
     "Rubik-Bold": require("../assets/fonts/Rubik-Bold.ttf"),
     "Rubik-ExtraBold": require("../assets/fonts/Rubik-ExtraBold.ttf"),
     "Rubik-Light": require("../assets/fonts/Rubik-Light.ttf"),
@@ -15,14 +17,27 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    if (fontsLoaded) {
+    if (fontsLoaded || fontError) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded]);
-  if (!fontsLoaded) return null;
+  }, [fontsLoaded, fontError]);
+
+  if (!fontsLoaded && !fontError) {
+    return null;
+  }
+
   return (
-    <GlobalProvider>
-      <Stack screenOptions={{ headerShown: false }} />
-    </GlobalProvider>
+    <ErrorBoundary>
+      <GlobalProvider>
+        <StatusBar style="dark" />
+        <Stack screenOptions={{ headerShown: false }}>
+          {/* Public routes */}
+          <Stack.Screen name="sign-in" />
+
+          {/* Protected routes group */}
+          <Stack.Screen name="(root)" />
+        </Stack>
+      </GlobalProvider>
+    </ErrorBoundary>
   );
 }

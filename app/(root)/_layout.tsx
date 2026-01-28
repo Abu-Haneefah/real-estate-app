@@ -1,19 +1,33 @@
+import React from "react";
 import { useGlobalContext } from "@/lib/global-provider";
 import { Redirect, Slot } from "expo-router";
-import { ActivityIndicator } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { ActivityIndicator, View } from "react-native";
 
 export default function AppLayout() {
   const { loading, isLogged } = useGlobalContext();
 
+  // Show loading spinner
   if (loading) {
     return (
-      <SafeAreaView className="bg-white h-full flex justify-center items-center">
-        <ActivityIndicator className="text-primary-300 " size={"large"} />
-      </SafeAreaView>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "white",
+        }}
+      >
+        <ActivityIndicator color="#0061ff" size="large" />
+      </View>
     );
   }
-  if (!isLogged) return <Redirect href="/sign-in" />;
 
+  // If not logged in, redirect to sign-in page
+  if (!isLogged && !loading) {
+    console.log("Not logged in, redirecting to sign-in...");
+    return <Redirect href="/sign-in" />;
+  }
+
+  // Only show protected content if logged in
   return <Slot />;
 }

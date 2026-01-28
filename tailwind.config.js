@@ -1,6 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  // NOTE: Update this to include the paths to all files that contain Nativewind classes.
   content: ["./app/**/*.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}"],
   presets: [require("nativewind/preset")],
   theme: {
@@ -8,10 +7,10 @@ module.exports = {
       fontFamily: {
         rubik: ["Rubik-Regular", "sans-serif"],
         rubikBold: ["Rubik-Bold", "sans-serif"],
-        " rubikExtraBold": ["Rubik-ExtraBold", "sans-serif"],
+        rubikExtraBold: ["Rubik-ExtraBold", "sans-serif"],
         rubikMedium: ["Rubik-Medium", "sans-serif"],
         rubikSemiBold: ["Rubik-SemiBold", "sans-serif"],
-        " rubikLight": ["Rubik-Light", "sans-serif"],
+        rubikLight: ["Rubik-Light", "sans-serif"],
       },
       colors: {
         primary: {

@@ -17,22 +17,35 @@ import { Redirect } from "expo-router";
 const SignIn = () => {
   const { refetch, loading, isLogged } = useGlobalContext();
 
-  if (!loading && isLogged) return <Redirect href="/" />;
+  // If already logged in, redirect to home (tabs index)
+  if (!loading && isLogged) return <Redirect href="/(root)/(tabs)" />;
+
   const handleLogin = async () => {
     const result = await login();
 
     if (result) {
       refetch();
+      // The redirect above will happen automatically due to isLogged change
     } else {
-      Alert.alert("Error failed to login");
+      Alert.alert("Error", "Failed to login");
     }
   };
+
+  // Show loading while checking auth
+  if (loading) {
+    return (
+      <SafeAreaView className="bg-white h-full justify-center items-center">
+        <Text className="text-lg font-rubik">Checking authentication...</Text>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView className="bg-white h-full">
-      <ScrollView contentContainerClassName="h-full">
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <Image
           source={images.onboarding}
-          className="w-full h-4/6 "
+          className="w-full h-4/6"
           resizeMode="contain"
         />
         <View className="px-10">
