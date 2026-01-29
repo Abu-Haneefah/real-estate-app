@@ -1,50 +1,66 @@
 import { Link } from "expo-router";
-import { Text, View, TouchableOpacity } from "react-native";
+import { Text, View, TouchableOpacity, Image } from "react-native";
 import { useGlobalContext } from "@/lib/global-provider";
 import { logout } from "@/lib/appwrite";
+import { SafeAreaView } from "react-native-safe-area-context";
+import images from "@/constants/images";
+import icons from "@/constants/icons";
+import Search from "@/app/components/Search";
+import { Card, FeaturedCard } from "@/app/components/Cards";
+import Filters from "@/app/components/Filters";
 
 export default function Index() {
   const { user } = useGlobalContext();
 
-  const handleLogout = async () => {
-    await logout();
-    // The AppLayout will redirect to sign-in page
-  };
-
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text className="text-3xl text-black-300 font-bold italic my-10 font-rubik">
-        Welcome to RealState
-      </Text>
-
-      {user && <Text className="text-lg mb-4">Welcome back, {user.name}!</Text>}
-
-      <View className="my-5 flex flex-col gap-4">
-        <Link href="/(root)/(tabs)/explore" asChild>
-          <TouchableOpacity className="bg-primary-300 px-6 py-3 rounded-lg">
-            <Text className="text-white font-rubikMedium">Go to Explore</Text>
+    <SafeAreaView className="bg-white h-full">
+      <View className="px-5">
+        <View className="flex flex-row items-center justify-between mt-5">
+          <View className="flex flex-row">
+            <Image source={images.avatar} className="size-12 rounded-full" />
+            <View className="flex flex-col items-start ml-2 justify-center">
+              <Text className="text-xs font-rubik text-black-100">Hello </Text>
+              <Text className="text-base font-rubikMedium text-black-300">
+                {user?.name || "User"}
+              </Text>
+            </View>
+          </View>
+          <Image source={icons.bell} className="size-6" />
+        </View>
+        <Search />
+        <View className="my-5">
+          <View className="flex flex-row items-center justify-between">
+            <Text className="text-xl font-rubikBold text-black-300">
+              Featured
+            </Text>
+            <TouchableOpacity>
+              <Text className="text-base font-rubikBold text-primary-300">
+                See All
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View className="flex flex-row gap-5 mt-5">
+            <FeaturedCard />
+            <FeaturedCard />
+            <FeaturedCard />
+          </View>
+        </View>
+        <View className="flex flex-row items-center justify-between">
+          <Text className="text-xl font-rubikBold text-black-300">
+            Our Recomendations
+          </Text>
+          <TouchableOpacity>
+            <Text className="text-base font-rubikBold text-primary-300">
+              See All
+            </Text>
           </TouchableOpacity>
-        </Link>
-
-        <Link href="/(root)/(tabs)/profile" asChild>
-          <TouchableOpacity className="bg-gray-200 px-6 py-3 rounded-lg">
-            <Text className="text-black font-rubikMedium">Go to Profile</Text>
-          </TouchableOpacity>
-        </Link>
-
-        <TouchableOpacity
-          onPress={handleLogout}
-          className="bg-red-500 px-6 py-3 rounded-lg mt-8"
-        >
-          <Text className="text-white font-rubikMedium">Logout</Text>
-        </TouchableOpacity>
+        </View>
+        <Filters />
+        <View className="flex flex-row gap-5 mt-5">
+          <Card />
+          <Card />
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }

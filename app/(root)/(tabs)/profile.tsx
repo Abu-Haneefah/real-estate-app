@@ -40,6 +40,7 @@ const SettingsItem = ({
 const Profile = () => {
   const { user, refetch, loading } = useGlobalContext();
 
+  // const sliceUserName = user;
   const handleLogout = async () => {
     const result = await logout();
     if (result) {
