@@ -70,7 +70,7 @@ export const useAppwrite = <T, P extends Record<string, string | number>>({
     return () => {
       mountedRef.current = false;
     };
-  }, [skip, fetchData, params]);
+  }, [skip, fetchData, JSON.stringify(params)]);
 
   const refetch = async (newParams?: P) => {
     if (mountedRef.current) {

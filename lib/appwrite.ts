@@ -1,4 +1,11 @@
-import { Account, Avatars, Client, OAuthProvider } from "react-native-appwrite";
+import {
+  Account,
+  Avatars,
+  Client,
+  Databases,
+  OAuthProvider,
+  Query,
+} from "react-native-appwrite";
 import * as Linking from "expo-linking";
 import * as WebBrowser from "expo-web-browser";
 
@@ -6,6 +13,11 @@ export const config = {
   platform: "com.jsm.restate",
   endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT,
   projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID,
+  databaseId: process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID,
+  agentsTableId: process.env.EXPO_PUBLIC_APPWRITE_AGENT_TABLE_ID,
+  galleriesTableId: process.env.EXPO_PUBLIC_APPWRITE_GALLARIES_TABLE_ID,
+  reviewsTableId: process.env.EXPO_PUBLIC_APPWRITE_REVIEWS_TABLE_ID,
+  propertiesTableId: process.env.EXPO_PUBLIC_APPWRITE_PROPERTIES_TABLE_ID,
 };
 
 export const client = new Client();
@@ -17,6 +29,7 @@ client
 
 export const avatar = new Avatars(client);
 export const account = new Account(client);
+export const databases = new Databases(client);
 
 export async function login() {
   try {
@@ -105,5 +118,70 @@ export async function logout() {
   } catch (error) {
     console.error("DEBUG: Logout error", error);
     return false;
+  }
+}
+
+export async function getLatestProperties() {
+  try {
+    const result = await databases.listDocuments(
+      config.databaseId!,
+      config.propertiesTableId!,
+      [Query.orderAsc("$createdAt"), Query.limit(5)],
+    );
+    console.log("DEBUG: Fetched Latest Properties:", result.documents.length);
+
+    return result.documents;
+  } catch (error) {
+    console.error("DEBUG: Get Latest Properties error", error);
+    return [];
+  }
+}
+export async function getProperties({
+  filter,
+  query,
+  limit,
+}: {
+  filter: string;
+  query?: string;
+  limit?: number;
+}) {
+  try {
+    const buildQuary = [Query.orderAsc("$createdAt")];
+    if (filter && filter !== "All") {
+      buildQuary.push(Query.equal("type", filter));
+    }
+    if (query) {
+      buildQuary.push(
+        Query.or([
+          Query.search("name", query),
+          Query.search("address", query),
+          Query.search("type", query),
+        ]),
+      );
+    }
+    if (limit) buildQuary.push(Query.limit(limit));
+    const result = await databases.listDocuments(
+      config.databaseId!,
+      config.propertiesTableId!,
+      buildQuary,
+    );
+
+    return result.documents;
+  } catch (error) {
+    console.error("DEBUG: Get Properties error", error);
+    return [];
+  }
+}
+export async function getPropertyById({ id }: { id: string }) {
+  try {
+    const result = await databases.getDocument(
+      config.databaseId!,
+      config.propertiesTableId!,
+      id,
+    );
+    return result;
+  } catch (error) {
+    console.error(error);
+    return null;
   }
 }
